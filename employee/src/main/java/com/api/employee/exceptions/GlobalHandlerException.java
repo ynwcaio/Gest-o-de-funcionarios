@@ -28,4 +28,21 @@ public class GlobalHandlerException  {
                 .body(message);
     }
 
+    @ExceptionHandler(DepartmentNotFound.class)
+
+    public ResponseEntity<Set<String>> handleDepartmentNotFound(DepartmentNotFound e){
+
+        Set<String> message = new HashSet<>();
+
+        message.add("Timestamp: " + LocalDateTime.now());
+
+        message.add("Https Status: " + HttpStatus.NOT_FOUND.value());
+
+        message.add("Error: " + e.getMessage());
+
+        return ResponseEntity.status
+                        (HttpStatus.NOT_FOUND)
+                .body(message);
+    }
+
 }

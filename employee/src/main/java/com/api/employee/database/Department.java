@@ -1,6 +1,7 @@
 package com.api.employee.database;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class Department {
     @OneToMany(mappedBy = "department",
     cascade = CascadeType.ALL,
     fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Employee> employees;
 
     public Department(){

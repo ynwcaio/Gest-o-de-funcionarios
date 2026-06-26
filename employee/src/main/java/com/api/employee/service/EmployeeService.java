@@ -2,9 +2,11 @@ package com.api.employee.service;
 
 
 import com.api.employee.DTO.EmployeeDTO;
+import com.api.employee.database.Department;
 import com.api.employee.database.DepartmentRepository;
 import com.api.employee.database.Employee;
 import com.api.employee.database.EmployeeRepository;
+import com.api.employee.exceptions.DepartmentNotFound;
 import com.api.employee.exceptions.EmployeeNotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,9 @@ public class EmployeeService {
 
         Employee employee = new Employee();
 
+        Department department = departmentRepository.findById(dto.getDepartment().getId())
+                .orElseThrow(() -> new DepartmentNotFound("Department not found with ID: " + dto.getDepartment().getId()));
+
         employee.setName(dto.getName());
 
         employee.setEmail(dto.getEmail());
@@ -52,8 +57,38 @@ public class EmployeeService {
 
         employee.setSalary(dto.getSalary());
 
+        employee.setDepartment(department);
+
         employeeRepository.save(employee);
 
-        return new  EmployeeDTO(employee);
+        return new EmployeeDTO(employee);
+    }
+
+
+    @Transactional
+    public EmployeeDTO update(UUID id, EmployeeDTO dto){
+
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFound("Employee not found with ID: " + id));
+
+        Department department = departmentRepository.findById(dto.getDepartment().getId())
+                .orElseThrow(() -> new DepartmentNotFound("Department not found with ID: " + dto.getDepartment().getId()));
+
+        employee.setName(dto.getName());
+        employee.setEmail(dto.getEmail());
+        employee.setAge(dto.getAge());
+        employee.setSalary(dto.getSalary());
+        employee.setDepartment(department);
+
+        employeeRepository.save(employee);
+
+        return new EmployeeDTO(employee);
+
+    }
+
+
+    @Transactional
+    public void delete(UUID id){
+        employeeRepository.deleteById(id);
     }
 }
